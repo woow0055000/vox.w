@@ -1,0 +1,30 @@
+{
+  "Demo_Pioneer": {
+    "pioneer_id": "Demo_Pioneer",
+    "created_at": "2026-06-26T12:00:00Z",
+    "interests": [
+      "Web3",
+      "Decentralized Apps",
+      "Cryptography",
+      "Mobile GAI"
+    ],
+    "writing_style": "تحليلي ومباشر، يفضل الاختصار التقني",
+    "recent_topics": [
+      "Pi network ecosystem",
+      "Zero Knowledge Proofs"
+    ],
+    "embeddings_count": 1248,
+    "memory_shards": [
+      {
+        "id": "m_01",
+        "content": "الرائد يبحث عن تطوير بنية تحتية آمنة ومقاومة للرقابة لتطبيقه Vox.w.",
+        "timestamp": "2026-06-26T13:10:00Z"
+      },
+      {
+        "id": "m_02",
+        "content": "يفضل الرائد اللون البنفسجي الداكن (#522D80) لرمزية الأمان والربط مع شبكة باي واللون الأخضر الفوسفوري التكيفي (#00E676) لرمزية الحياة الرقمية والتطور.",
+        "timestamp": "2026-06-26T14:40:00Z"
+      }
+    ]
+  }
+}

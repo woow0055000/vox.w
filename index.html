@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vox.w - Personal Generative AGI</title>
+    <!-- Google Fonts: Outfit & Tajawal -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Tajawal:wght@300;400;700;900&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Premium Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Main Style -->
+    <link rel="stylesheet" href="style.css">
+    <!-- Pi Browser SDK -->
+    <script src="https://sdk.minepi.com/pi-sdk.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- background decorative elements -->
+        <div class="bg-glow purple-glow"></div>
+        <div class="bg-glow green-glow"></div>
+
+        <!-- Sidebar - Evolution DNA Panel -->
+        <aside class="sidebar glass-panel">
+            <div class="sidebar-header">
+                <div class="dna-helix">
+                    <i class="fa-solid fa-dna dna-icon"></i>
+                </div>
+                <h2>ملف تطور الرائد</h2>
+                <p class="subtitle">Individual GAI DNA Shard</p>
+            </div>
+
+            <div class="user-card">
+                <div class="user-avatar">
+                    <i class="fa-solid fa-user-astronaut"></i>
+                </div>
+                <div class="user-info">
+                    <h3 id="pioneer-username">رائد غير مصادق</h3>
+                    <span class="badge" id="pi-status-badge">بانتظار Pi SDK...</span>
+                    <button class="btn-signin" id="btn-pi-signin" style="display:none; margin-top:5px; background:var(--pi-purple); border:1px solid rgba(255,255,255,0.1); color:white; padding:4px 8px; border-radius:10px; cursor:pointer; font-size:11px;">تسجيل الدخول يدويًا</button>
+                </div>
+            </div>
+
+            <div class="dna-stats">
+                <div class="stat-box">
+                    <span class="stat-label">المستودع المتجهي (Vector DB)</span>
+                    <span class="stat-value text-green">Pinecone [Partition-V1]</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-label">الكتل المعرفية المخزنة (Embeddings)</span>
+                    <span class="stat-value" id="embedding-count">1,248 Chunk</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-label">سرعة الاستجابة الصوتية</span>
+                    <span class="stat-value" id="latency-val">0ms</span>
+                </div>
+            </div>
+            
+            <button class="btn-upgrade glass-panel" id="btn-pi-payment">
+                <i class="fa-solid fa-crown text-green"></i> ترقية سعة الذاكرة (1 Pi)
+            </button>
+
+            <div class="prompt-box">
+                <div class="prompt-header">
+                    <span><i class="fa-solid fa-brain text-green"></i> أمر النظام الخارق (System Prompt)</span>
+                    <button class="btn-icon" id="edit-prompt-btn" title="تحديث التوجيه"><i class="fa-solid fa-pen"></i></button>
+                </div>
+                <textarea id="system-prompt-display" readonly># توجيه الـ GAI لـ Vox.w:
+أنت المساعد الذكي الشخصي التراكمي للرائد. وظيفتك التعلم المستمر من أسلوبه، كلماته، وأهدافه.
+- اقرأ ملف التطور الخاص به قبل كل إجابة.
+- اضبط نبرة صوتك وأسلوبك لتطابق تفضيلاته.
+- وثّق الأفكار الهامة وجدولها في قاعدة بيانات المتجهات الشجرية المعزولة.</textarea>
+            </div>
+
+            <div class="logs-container">
+                <div class="logs-header">
+                    <span><i class="fa-solid fa-terminal text-purple"></i> سجل خادم البنية التحتية</span>
+                    <span class="pulse-indicator green"></span>
+                </div>
+                <div class="logs-body" id="infra-logs">
+                    <div class="log-line system">[Vox.w] تم تشغيل الواجهة. بانتظار تهيئة Pi SDK...</div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Display: Neural Sphere & Interface Mode -->
+        <main class="main-display">
+            <header class="app-header">
+                <div class="logo-area">
+                    <span class="logo-v">V</span>
+                    <span class="logo-w">ox.w</span>
+                </div>
+                <div class="status-indicators">
+                    <div class="status-item">
+                        <span class="status-dot green" id="ws-status-dot"></span>
+                        <span class="status-text">WebSockets: نشط</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-dot" id="webrtc-status-dot"></span>
+                        <span class="status-text">WebRTC: مغلق</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Neural Sphere Canvas Container -->
+            <div class="neural-sphere-container">
+                <canvas id="neuralCanvas"></canvas>
+                <div class="sphere-overlay">
+                    <div class="sphere-text" id="sphere-status-text">انقر لبدء المحادثة</div>
+                    <div class="live-waveforms" id="liveWaveform" style="display: none;">
+                        <span></span><span></span><span></span><span></span><span></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mode Controls & Interface Cards -->
+            <section class="controls-section">
+                <!-- Tabs to Switch Modes -->
+                <div class="tabs-container glass-panel">
+                    <button class="tab-btn active" data-tab="text-chat">
+                        <i class="fa-regular fa-comment-dots"></i>
+                        <span>كتابة</span>
+                    </button>
+                    <button class="tab-btn" data-tab="voice-msg">
+                        <i class="fa-solid fa-microphone"></i>
+                        <span>رسالة صوتية</span>
+                    </button>
+                    <button class="tab-btn" data-tab="live-call">
+                        <i class="fa-solid fa-phone-volume"></i>
+                        <span>اتصال AGI مباشر</span>
+                    </button>
+                </div>
+
+                <!-- Mode Card 1: Text Chat -->
+                <div class="mode-card glass-panel active" id="text-chat-card">
+                    <div class="chat-messages" id="chat-messages-box">
+                        <div class="message system-msg">
+                            أهلاً بك في Vox.w. أنا الـ GAI الشخصي الخاص بك. تفاعلاتك هنا تحفظ في ذاكرتك المستقلة الآمنة لتطوير ذكائي التراكمي.
+                        </div>
+                    </div>
+                    <div class="chat-input-area">
+                        <input type="text" id="chat-input" placeholder="اكتب فكرتك أو سؤالك للـ AGI..." autocomplete="off">
+                        <button class="btn-send" id="btn-send-text">
+                            <i class="fa-solid fa-paper-plane-rtl"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Mode Card 2: Voice Message -->
+                <div class="mode-card glass-panel" id="voice-msg-card">
+                    <div class="voice-status-container">
+                        <div class="voice-mic-btn-outer" id="voice-mic-trigger">
+                            <div class="voice-mic-btn">
+                                <i class="fa-solid fa-microphone-lines"></i>
+                            </div>
+                            <div class="ripple-ring"></div>
+                        </div>
+                        <p class="voice-instruction" id="voice-status-label">انقر على المايك للبدء بالتسجيل</p>
+                        <div class="audio-playback-area" id="audio-playback-box" style="display:none;">
+                            <audio id="voice-playback" controls></audio>
+                            <button class="btn-submit" id="btn-submit-voice">معالجة وتحديث الذاكرة <i class="fa-solid fa-cloud-arrow-up"></i></button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mode Card 3: Live AGI Call -->
+                <div class="mode-card glass-panel" id="live-call-card">
+                    <div class="live-call-container">
+                        <div class="call-avatar-glow" id="call-glow-avatar">
+                            <i class="fa-solid fa-headset"></i>
+                        </div>
+                        <div class="call-stats-overlay">
+                            <div class="call-stat"><span class="lbl">Latency:</span> <span class="val text-green" id="call-latency">--</span></div>
+                            <div class="call-stat"><span class="lbl">Codec:</span> <span class="val text-purple">Opus Audio 48kHz</span></div>
+                            <div class="call-stat"><span class="lbl">Signaling:</span> <span class="val" id="call-signaling-state">غير متصل</span></div>
+                        </div>
+                        <button class="btn-call-toggle btn-start-call" id="btn-live-call-toggle">
+                            <i class="fa-solid fa-phone"></i>
+                            <span>بدء مكالمة WebRTC فورية</span>
+                        </button>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Payment Modal Overlay -->
+    <div class="payment-modal-overlay" id="payment-modal" style="display:none;">
+        <div class="payment-modal glass-panel">
+            <div class="modal-header">
+                <h3>بوابة مدفوعات Pi Network Sandbox</h3>
+                <button class="btn-close-modal" id="btn-close-payment" style="background:none; border:none; color:var(--text-muted); cursor:pointer; font-size:18px;"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="payment-step active" id="step-prepare">
+                    <i class="fa-solid fa-spinner fa-spin text-purple modal-large-icon"></i>
+                    <p>جاري تهيئة المعاملة الآمنة مع شبكة باي...</p>
+                </div>
+                <div class="payment-step" id="step-auth" style="display:none;">
+                    <i class="fa-solid fa-wallet text-green modal-large-icon"></i>
+                    <p>يرجى تأكيد المعاملة في محفظة باي الخاصة بك (Pi Wallet):</p>
+                    <div class="tx-details">
+                        <div><span>المستلم:</span> <strong>Vox.w GAI Engine</strong></div>
+                        <div><span>المبلغ:</span> <strong class="text-purple">1.00 Pi</strong></div>
+                    </div>
+                    <button class="btn-submit" id="btn-confirm-tx" style="margin-top: 15px; width: 100%; justify-content: center;">تأكيد ودفع</button>
+                </div>
+                <div class="payment-step" id="step-success" style="display:none;">
+                    <i class="fa-solid fa-circle-check text-green modal-large-icon"></i>
+                    <h4 class="text-green" style="margin: 10px 0;">تم تأمين الدفع بنجاح!</h4>
+                    <p>لقد تمت ترقية سعة الذاكرة التكيفية الخاصة بك بمقدار +10,000 متجه.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script file -->
+    <script src="app.js"></script>
+</body>
+</html>
