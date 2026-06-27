@@ -24,8 +24,16 @@ if (!fs.existsSync(DB_PATH)) {
             "recent_topics": ["Pi network ecosystem", "Zero Knowledge Proofs"],
             "embeddings_count": 1248,
             "memory_shards": [
-                { "id": "m_01", "content": "الرائد يبحث عن تطوير بنية تحتية آمنة ومقاومة للرقابة لتطبيقه Vox.w.", "timestamp": "2026-06-26T13:10:00Z" },
-                { "id": "m_02", "content": "يفضل الرائد اللون البنفسجي الداكن (#522D80) لرمزية الأمان والربط مع شبكة باي واللون الأخضر الفوسفوري التكيفي (#00E676) لرمزية الحياة الرقمية والتطور.", "timestamp": "2026-06-26T14:40:00Z" }
+                {
+                    "id": "m_01",
+                    "content": "الرائد يبحث عن تطوير بنية تحتية آمنة ومقاومة للرقابة لتطبيقه Vox.w.",
+                    "timestamp": "2026-06-26T13:10:00Z"
+                },
+                {
+                    "id": "m_02",
+                    "content": "يفضل الرائد اللون البنفسجي الداكن (#522D80) لرمزية الأمان والربط مع شبكة Pi.",
+                    "timestamp": "2026-06-26T13:15:00Z"
+                }
             ]
         }
     };
@@ -93,7 +101,7 @@ app.post('/api/auth/verify', async (req, res) => {
             userData = await makeHttpsGet('https://api.minepi.com/v2/me', headers);
         }
         
-        const username = userData.username;
+        const username = userData.username || 'Demo_Pioneer';
         console.log(`[Vox.w Auth Success] تم توثيق الرائد @${username} عبر شبكة باي بنجاح.`);
         
         // Ensure user has profile partition in vector database
@@ -282,9 +290,9 @@ wss.on('connection', (ws) => {
                 setTimeout(() => {
                     let responseText = "";
                     if (data.message.includes("من أنا") || data.message.includes("تذكرني")) {
-                        responseText = `أنت الرائد @${username}. أتذكر اهتمامك بـ ${buildAdaptiveSystemPrompt(username).match(/الاهتمامات: (.*)/)?.[1] || "التطوير البرمجي"} وتصميم واجهة Vox.w المميزة بالأرجواني والأخضر. ذاكرتي تنمو معك باستمرار!`;
+                        responseText = `أنت الرائد @${username}. سأحتفظ بتفضيلاتك وسأستعين بملف تطورك عند الإجابة.`;
                     } else {
-                        responseText = `أستقبل إشارتك يا @${username} عبر WebSocket. لقد قمت بمراجعة توجيهي التراكمي الخاص بك وربطه بالمتجهات الحالية لتقديم هذه الاستجابة المناسبة.`;
+                        responseText = `أستقبل إشارتك يا @${username} عبر WebSocket. لقد راجعت توجيهي التراكمي وسأبني إجاباتي وفق تفضيلاتك.`;
                     }
 
                     // 3. تحديث الذاكرة التكيفية بناءً على المحادثة الجديدة
@@ -310,14 +318,14 @@ wss.on('connection', (ws) => {
                     }));
 
                     // تمرير النص للذكاء لتوليد الإجابة
-                    const systemPrompt = buildAdaptiveSystemPrompt(username);
-                    const responseText = `تم فك تشفير رسالتك الصوتية: "${simulatedText}". وقمت بتحديث شظايا الذاكرة في Pinecone بنجاح.`;
+                    const systemPrompt2 = buildAdaptiveSystemPrompt(username);
+                    const responseText2 = `تم فك تشفير رسالتك الصوتية: "${simulatedText}". وقمت بتحديث شظايا الذاكرة بنجاح.`;
                     
-                    saveNewMemoryShard(username, simulatedText, responseText);
+                    saveNewMemoryShard(username, simulatedText, responseText2);
 
                     ws.send(JSON.stringify({
                         type: 'text_response',
-                        message: responseText
+                        message: responseText2
                     }));
                 }, 1200);
                 break;
